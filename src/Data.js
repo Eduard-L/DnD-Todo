@@ -1,17 +1,14 @@
 export const startContainers = [
     {
-        title: "todo",
-        id: 0,
-        tasks: []
-    },
-    {
-        title: "In Process",
+        title: "Done",
         id: 1,
         tasks: []
     },
     {
-        title: "Done",
+        title: "Todo",
         id: 2,
         tasks: []
     }
 ];
+
+

@@ -1,7 +1,8 @@
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-export const Task = ({ text, setDisableDrag }) => {
+export const Task = ({ text, setDisableDrag, t }) => {
+    // console.log(t)
     return (
         <div className="task">
             <div className="task-icons-con">

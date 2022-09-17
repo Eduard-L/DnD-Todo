@@ -5,51 +5,59 @@ import { DndItem } from "./DndItem";
 import { startContainers } from "./Data.js";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+import { v4 as uuidv4 } from 'uuid';
 
 export default function App() {
   const [containers, setContainers] = useState(startContainers);
   const [conTitle, setConTitle] = useState("");
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState(['Done', 'Todo']);
+  const [selectId, setSelectId] = useState(null)
   const [task, setTask] = useState("");
   const [disableDrag, setDisableDrag] = useState(true);
 
-  // console.log("rerendering");
-  useEffect(() => {
-    if (!containers) return;
-    let newOptions = [];
-    containers.forEach((c) => {
-      newOptions.push(c.id.toString());
-    });
-    setOptions(newOptions);
-  }, []);
+
+
+  const handleChangeSelect = (newValue) => {
+
+    setSelectId(() => {
+      if (newValue === options[0]) {
+        return 1
+      }
+      else {
+        return 2
+      }
+    })
+  }
 
   const handleAddContainer = (e) => {
     e.preventDefault();
     setContainers([
       ...containers,
-      { id: containers.length, title: conTitle, tasks: [] }
+      { id: uuidv4(), title: conTitle, tasks: [] }
     ]);
     setConTitle("");
   };
 
-  const handleAddTask = (e) => {
+  const handleAddTask = (e, id) => {
     e.preventDefault();
-    const c = containers.find((c) => c.id === 1);
-    c.tasks.push({ id: c.tasks.length + 100, text: task });
+    if (!id) return
+
+    const c = containers.find((c) => c.id === id);
+    c.tasks.push({ id: uuidv4(), text: task, conId: id });
     let newCon = [...containers];
-    newCon = newCon.filter((c) => c.id !== 1);
-    console.log(c);
+    newCon = newCon.filter((c) => c.id !== id);
+    // console.log(c);
     newCon.push(c);
     newCon.sort((a, b) => a.id - b.id);
-    console.log(newCon);
+    // console.log(newCon);
     setContainers(newCon);
     setTask("");
   };
 
   const handleDragItem = (dragIndex, hoverIndex) => {
 
-    console.log(dragIndex)
-    console.log(hoverIndex)
+    // console.log(dragIndex)
+    // console.log(hoverIndex)
     const newCont = [...containers];
     const dragItem = containers[dragIndex];
     if (!dragItem) return
@@ -78,7 +86,7 @@ export default function App() {
             Add Container
           </button>
         </form>
-        <form onSubmit={handleAddTask} className="container-form">
+        <form onSubmit={(e) => handleAddTask(e, selectId)} className="container-form">
           <input
             name="container-title"
             className="container-title"
@@ -97,7 +105,11 @@ export default function App() {
         disableClearable
         id="combo-box-demo"
         options={[...options]}
+        onChange={(event, newValue) => {
+          handleChangeSelect(newValue);
+        }}
         sx={{ width: 300, margin: "10px 0 10px 0" }}
+
         renderInput={(params) => (
           <TextField {...params} label="Choose Container" />
         )}
