@@ -5,6 +5,11 @@ import { DndItem } from "./DndItem.js";
 import { Task } from "./Task.js";
 import { useState } from "react";
 import React from "react";
+import { Api } from "./utils/myApi.js";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { Button, TextField } from "@mui/material";
+import { getCookie } from "./utils/handleCookies.js";
+import { useSelector } from "react-redux";
 
 export const Container = ({
     title,
@@ -12,9 +17,18 @@ export const Container = ({
     onDisableDrag,
     id,
     containers,
-    setContainers
+    setContainers,
+    // token,
+    onDelete
 }) => {
     const [disableDrag, setDisableDrag] = useState(true);
+    const [isInputOpen, setIsInputOpen] = useState(false)
+    const [taskName, setTaskName] = useState('');
+    const { token } = getCookie('token')
+    const userInfo = useSelector(state => state.userInfo)
+    const { name, email } = userInfo
+
+
 
     const handleDragTask = (dragIndex, hoverIndex) => {
 
@@ -26,7 +40,7 @@ export const Container = ({
         newTasks.splice(hoverIndex, 0, dTask);
 
         const newCon = containers.map((c) => {
-            if (c.id === id) {
+            if (c._id === id) {
                 return { ...c, tasks: newTasks };
             }
             return c;
@@ -36,62 +50,24 @@ export const Container = ({
     };
 
     const handleDragTaskToDiffCon = (dragItem, tCon, hoveredTaskId) => {
-        // let newCons = [...containers]
-        // let rootCon = newCons.find((c) => c.id === dragItem.conId)
-        // let targetCon = newCons.find((c) => c.id === tCon)
-        // const rootIndex = rootCon.tasks.indexOf(dragItem)
-        // const hoverT = targetCon.tasks.find((t) => t.id === hoveredTaskId)
-        // const hIndex = targetCon.tasks.indexOf(hoverT)
-        // const t = targetCon.tasks.find((t) => t.id === dragItem.id)
-
-        // if (t) return
-
-
-        // rootCon.tasks.splice(rootIndex, 1)
-        // dragItem = { ...dragItem, conId: tCon }
-        // targetCon.tasks.splice(hIndex, 0, dragItem)
-
-        // setContainers(() => {
-        //     newCons = newCons.map((c) => {
-        //         if (c.id === rootCon.id) {
-        //             return rootCon
-        //         }
-        //         else if (c.id === targetCon.id) {
-        //             return targetCon
-        //         }
-        //         else {
-        //             return c
-        //         }
-
-        //     })
-
-        //     return newCons
-
-        // })
-
-
+        // console.log(dragItem)
         if (!dragItem || !tCon) return
         let newCons = [...containers];
-        let targetCon = newCons.find((c) => c.id === tCon)
-        let dTaskId = dragItem.id;
-        const t = targetCon.tasks.find((t) => t.id === dTaskId)
-        const hoverT = targetCon.tasks.find((t) => t.id === hoveredTaskId)
-        const hIndex = targetCon.tasks.indexOf(hoverT)
-        console.log(hIndex)
-        // console.log(t)
+        let targetCon = newCons.find((c) => c._id === tCon)
+        let dTaskId = dragItem._id;
+        const t = targetCon.tasks.find((t) => t._id === dTaskId)
         if (t) {
-            const index = targetCon.tasks.indexOf(t)
-            const hIndex = targetCon.tasks.indexOf(hoverT)
-
-
             return
         }
+        const hoverT = targetCon.tasks.find((t) => t._id === hoveredTaskId)
+        const hIndex = targetCon.tasks.indexOf(hoverT)
 
-        let rootCon = newCons.find((c) => c.id === dragItem.conId)
-        let newRootTasks = rootCon.tasks.filter((c) => c.id !== dragItem.id)
+        let rootCon = newCons.find((c) => c._id === dragItem.container)
+        console.log(rootCon.tasks)
+        let newRootTasks = rootCon.tasks.filter((c) => c._id !== dragItem._id)
         rootCon = { ...rootCon, tasks: newRootTasks }
 
-        let dragI = { id: dragItem.id, text: dragItem.text, conId: tCon }
+        let dragI = { _id: dragItem._id, title: dragItem.title, container: tCon }
         let newTargetTasks = [...targetCon.tasks]
         console.log(targetCon.tasks)
         // newTasks.splice(dragIndex, 1);
@@ -101,10 +77,10 @@ export const Container = ({
         targetCon = { ...targetCon, tasks: newTargetTasks }
 
         newCons = newCons.map((c) => {
-            if (c.id === rootCon.id) {
+            if (c._id === rootCon._id) {
                 return rootCon
             }
-            else if (c.id === targetCon.id) {
+            else if (c._id === targetCon._id) {
                 return targetCon
             }
             else {
@@ -117,19 +93,93 @@ export const Container = ({
 
     }
 
-    const handleDeleteTask = () => {
+    const handleDeleteTask = (_id) => {
+        console.log(_id)
+        let newContainers = [...containers];
+        let index;
+        let containerId
+        newContainers.map((c, i) => {
+            if (c?._id === id) {
+                index = i
+                containerId = c._id
+            }
+        });
+
+        Api.handleDeleteTasK(token, containerId, _id).then((task) => {
+            if (task) {
+                newContainers = newContainers.map((c) => {
+                    if (c._id === containerId) {
+                        let tasks = c.tasks.filter((t) => t._id !== _id)
+                        return { ...c, tasks: tasks }
+                    }
+                    return c
+                })
+                Api.handleUpdateUserInfo(token, name, email, newContainers).then((info) => {
+                    if (info) {
+                        setContainers(newContainers)
+                    }
+                })
+            }
+            else {
+
+            }
+        }).catch((e) => console.log(e))
+
+
 
     }
 
-    const handleDeleteContainer = () => {
-        const newCon = containers.filter((c) => c.id !== id);
-        setContainers(newCon);
+    const handleContainerClick = (e) => {
+
+        if (!e.target.classList.contains('container-input') && isInputOpen) {
+            setIsInputOpen(false)
+        }
+    }
+
+    const handleAddTask = () => {
+
+        let newContainers = [...containers]
+
+        let index;
+        newContainers.map((c, i) => {
+            if (c?._id === id) {
+                index = i
+            }
+        });
+
+        Api.handleAddNewTasK(token, id, taskName).then((task) => {
+            if (task) {
+
+                let tasks = [...newContainers[index].tasks]
+                tasks = [...tasks, task]
+                console.log(tasks)
+                newContainers = newContainers.map((c, i) => {
+                    if (i === index) {
+                        return { ...c, tasks: tasks }
+                    }
+                    return c
+                })
+
+                // newContainers[index].tasks = tasks
+                // console.log(newContainers)
+
+                Api.handleUpdateUserInfo(token, name, email, newContainers).then((info) => {
+                    if (info) {
+                        setContainers(newContainers)
+                        setTaskName('')
+                    }
+                })
+                console.log(task)
+
+            }
+        }).catch((e) => alert(e))
 
 
-    };
+    }
+
 
     return (
-        <div className="container">
+        <div onClick={() => setIsInputOpen(false)} className="container">
             <div className="icons-container">
                 <IconButton
                     onMouseDown={() => onDisableDrag(false)}
@@ -138,7 +188,7 @@ export const Container = ({
                     <DragHandleIcon />
                 </IconButton>
                 <IconButton
-                    onClick={handleDeleteContainer}
+                    onClick={() => onDelete(id)}
                     style={{ cursor: "pointer" }}
                 >
                     <DeleteIcon />
@@ -154,20 +204,36 @@ export const Container = ({
                                 type="task"
                                 disAbleDrag={disableDrag}
                                 setDisbaleDrag={setDisableDrag}
-                                key={t?.id}
-                                id={t?.id}
+                                key={t?._id}
+                                _id={t?._id}
                                 index={i}
                                 onHover={handleDragTask}
                                 task={t}
-                                conId={t?.conId}
+                                container={t?.container}
                                 onDragToDiffCon={handleDragTaskToDiffCon}
-                                text={t?.text}
+                                title={t?.title}
+
                             >
-                                <Task setDisableDrag={setDisableDrag} task={t} text={t?.text} />
+                                <Task setDisableDrag={setDisableDrag} task={t} text={t?.title} id={t?._id} onDelete={handleDeleteTask} />
                             </DndItem>
                         );
                     })}
             </div>
+
+            {
+                isInputOpen ?
+                    <div onClick={(e) => e.stopPropagation()} className=" flex flex-row w-full justify-between absolute bottom-0 container-input">
+                        <TextField value={taskName || ''} onChange={(e) => { setTaskName(e.target.value) }} className="container-input" label="task name" type='text' name='task-name'></TextField>
+                        <Button onClick={handleAddTask} variant="contained" >Add</Button>
+                    </div>
+                    :
+                    <div className="absolute bottom-0 right-0" style={{ cursor: "pointer" }}>
+                        <IconButton onClick={(e) => { e.stopPropagation(); setIsInputOpen(true) }}>
+                            <AddCircleOutlineIcon />
+                        </IconButton>
+                    </div>
+            }
+
         </div>
     );
 };

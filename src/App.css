@@ -6,7 +6,7 @@ body {
   margin: 0;
   box-sizing: border-box;
 }
-form {
+.form {
   margin-top: 10px;
   width: 50%;
   display: flex;
@@ -22,8 +22,8 @@ form {
   cursor: grab;
 }
 .App {
-  height: 94vh;
-  padding: 20px;
+  
+  padding: 10px;
   margin: 0px;
   display: flex;
   flex-direction: column;
@@ -41,7 +41,7 @@ form {
   position: relative;
 }
 .container-wrapper {
-  height: 80%;
+  height: 60%;
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -82,6 +82,7 @@ form {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  max-height: 65PX;
 }
 .task-icons-con {
   display: flex;

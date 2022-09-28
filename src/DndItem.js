@@ -7,7 +7,7 @@ const ItemTypes = {
 
 export const DndItem = React.memo(({
     Component,
-    id,
+    _id,
     index,
     children,
     onHover,
@@ -17,13 +17,13 @@ export const DndItem = React.memo(({
     setDisbaleDrag,
     type,
     task,
-    conId,
+    container,
     onDragToDiffCon,
-    text
+    title
 }) => {
     const ref = useRef(null);
     let opacity;
-    const [{ isOver }, drop] = useDrop({
+    const [{ isOver, canDrop }, drop] = useDrop({
         accept: type,
         collect: (monitor) => ({
             isOver: !!monitor.isOver(),
@@ -31,22 +31,22 @@ export const DndItem = React.memo(({
         }),
 
         hover(item, monitor) {
-
-
+            // console.log(item)
+            // console.log(ref.current)
             if (!ref.current) {
                 return;
             }
-            if (conId !== item.conId) {
+            if (container !== item.container) {
 
 
-                onDragToDiffCon(item, conId, id)
-                opacity = isOver ? 0 : 1;
-                item.conId = conId
+                onDragToDiffCon(item, container, _id)
+                opacity = 0;
+                // opacity = isOver ? 0 : 1;
+                item.container = container
                 item.index = index
-                console.log(index)
-                console.log(item)
 
-                return
+
+                return item
             }
 
 
@@ -58,10 +58,7 @@ export const DndItem = React.memo(({
                 return;
             }
 
-
-
             if (isOver) {
-                console.log(dragIndex, hoverIndex)
 
                 onHover(dragIndex, hoverIndex);
 
@@ -69,19 +66,19 @@ export const DndItem = React.memo(({
             }
         },
         drop: () => {
-            if (handleDropItems) {
-                handleDropItems(setDisbaleDrag);
-            }
-            if (setDisbaleDrag) {
-                setDisbaleDrag(true);
-            }
+            // if (handleDropItems) {
+            //     handleDropItems(setDisbaleDrag);
+            // }
+            // if (setDisbaleDrag) {
+            //     setDisbaleDrag(true);
+            // }
         }
     });
 
     const [{ isDragging }, drag] = useDrag({
         type: type,
         item: () => {
-            return { id, index, conId, text };
+            return { _id, index, container, title };
         },
         canDrag: () => {
             if (disAbleDrag) {
@@ -90,11 +87,12 @@ export const DndItem = React.memo(({
             return true;
         },
         collect: (monitor) => ({
-            isDragging: monitor.isDragging()
+            isDragging: !!monitor.isDragging()
         })
     });
 
     opacity = isDragging ? 0 : 1;
+
     // const opacity = isOver ? 0 : 1
 
     drag(drop(ref));
