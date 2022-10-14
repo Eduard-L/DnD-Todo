@@ -9,7 +9,8 @@ class myApi {
             return res.json()
         }
 
-        Promise.reject(`something went wrong with the server ${res.status}`)
+        throw new Error(`${res.status}`)
+
     }
     async createNewUser(values) {
         const { name, email, password } = values
@@ -139,6 +140,7 @@ class myApi {
                 "Content-Type": "application/json",
             }
         })
+
         return this._checkResponse(response)
     }
 

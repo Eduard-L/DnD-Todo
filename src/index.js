@@ -8,20 +8,23 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { BrowserRouter } from "react-router-dom";
 import store from './redux/store'
 import { Provider } from 'react-redux'
+import { StyledEngineProvider } from '@mui/material/styles';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
 
     <BrowserRouter>
-      <Provider store={store}>
-        <DndProvider backend={HTML5Backend}>
-          <App />
-        </DndProvider>
-      </Provider>
+      <StyledEngineProvider injectFirst>
+        <Provider store={store}>
+          <DndProvider backend={HTML5Backend}>
+            <App />
+          </DndProvider>
+        </Provider>
+      </StyledEngineProvider>
     </BrowserRouter>
 
-  </React.StrictMode>
+  </React.StrictMode >
 );
 
 // If you want to start measuring performance in your app, pass a function

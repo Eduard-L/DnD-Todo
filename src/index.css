@@ -11,10 +11,37 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+
+
+.register-form{
+  width: 400px;
+  background: rgba(0,0,0,.5);
+  box-shadow: 0 15px 25px rgba(0,0,0,.6);
+
 }
-.task-text{
-  min-width: 165px;
+.login-btn:disabled{
+  opacity: 0.5;
+}
+.login-btn{
+  opacity: 1;
+ 
+}
+
+.login-btn:hover{
+  background-color: transparent;
+  opacity: 0.7;
+  transition: opacity 0.5s ease;
+}
+.login-subtitle{
+  transition: opacity 0.3s ease-in-out;
+  text-decoration: underline;
+}
+.login-subtitle:hover{
+  opacity: 0.8;
+}
+.lottie-animation{
+  height: 170px;
+  position: absolute;
+  top:0;
+  left:0;
 }

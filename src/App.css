@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 body {
+ 
   margin: 0;
   box-sizing: border-box;
 }
@@ -28,20 +29,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* background: linear-gradient(#141e30, #243b55); */
+  background-size: cover;
+  overflow: auto;
 }
-.container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 300px;
-  max-width: 20%;
-  border: 1px solid grey;
-  margin-right: 20px;
-  position: relative;
-}
+
 .container-wrapper {
-  height: 60%;
+  height: 85%;
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -54,40 +48,10 @@ body {
   justify-content: center;
   align-items: center;
 }
-.con__title {
-  margin: 0;
-  text-decoration: underline;
-}
-.icons-container {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: space-between;
-}
-.add-container-btn {
-  margin-left: 5px;
-  cursor: pointer;
-  border-radius: 20px;
-}
+
 .tasks-wrapper {
   
   width: 90%;
   padding: 10px;
 }
-.task {
-  border: 1px solid pink;
-  margin-top: 10px; 
-   padding: 5px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  max-height: 65PX;
-}
-.task-icons-con {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  width: 28%;
-  justify-content: space-between;
-}
+

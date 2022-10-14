@@ -1,0 +1,22 @@
+.task-text{
+    min-width: 165px;
+    color:#03e9f4;
+  }
+
+  .task {
+    border: 2px solid #03e9f4;
+    margin-top: 10px; 
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    border-radius: 10px;
+  }
+  .task-icons-con {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 28%;
+    justify-content: space-between;
+  }

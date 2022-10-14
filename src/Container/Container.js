@@ -1,15 +1,18 @@
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { DndItem } from "./DndItem.js";
-import { Task } from "./Task.js";
-import { useState } from "react";
+import { DndItem } from "../DndItem.js";
+import { Task } from "../Task/Task.js";
+import { useEffect, useState } from "react";
 import React from "react";
-import { Api } from "./utils/myApi.js";
+import { Api } from "../utils/myApi.js";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Button, TextField } from "@mui/material";
-import { getCookie } from "./utils/handleCookies.js";
+import { getCookie } from "../utils/handleCookies.js";
 import { useSelector } from "react-redux";
+import './Container.css'
+import AddIcon from '@mui/icons-material/Add';
+import { AddCircleOutline } from "@mui/icons-material";
 
 export const Container = ({
     title,
@@ -27,6 +30,15 @@ export const Container = ({
     const { token } = getCookie('token')
     const userInfo = useSelector(state => state.userInfo)
     const { name, email } = userInfo
+
+    useEffect(() => {
+        window.addEventListener('click', handleInputClose)
+
+        return () => {
+            window.removeEventListener('click', handleInputClose)
+        }
+    }, [])
+
 
 
 
@@ -129,11 +141,11 @@ export const Container = ({
 
     }
 
-    const handleContainerClick = (e) => {
+    const handleInputClose = (e) => {
 
-        if (!e.target.classList.contains('container-input') && isInputOpen) {
-            setIsInputOpen(false)
-        }
+
+        setIsInputOpen(false)
+
     }
 
     const handleAddTask = () => {
@@ -179,19 +191,19 @@ export const Container = ({
 
 
     return (
-        <div onClick={() => setIsInputOpen(false)} className="container">
+        <div className="container">
             <div className="icons-container">
                 <IconButton
                     onMouseDown={() => onDisableDrag(false)}
                     style={{ cursor: "grab" }}
                 >
-                    <DragHandleIcon />
+                    <DragHandleIcon className="drag-btn" style={{ fill: 'lightskyblue' }} />
                 </IconButton>
                 <IconButton
                     onClick={() => onDelete(id)}
                     style={{ cursor: "pointer" }}
                 >
-                    <DeleteIcon />
+                    <DeleteIcon className="delete-icon" style={{ fill: 'lightskyblue' }} />
                 </IconButton>
             </div>
             <h1 className="con__title">{title}</h1>
@@ -218,22 +230,29 @@ export const Container = ({
                             </DndItem>
                         );
                     })}
-            </div>
+                <div onClick={(e) => { e.stopPropagation(); setIsInputOpen(true) }} className="task task_type_add flex flex-col items-center justify-center relative" style={{ justifyContent: 'center', alignItems: "center", opacity: isInputOpen && 1 }}>
+                    {
+                        isInputOpen ?
+                            <div className=" flex flex-row  w-full container-input">
+                                <TextField value={taskName || ''} onChange={(e) => { setTaskName(e.target.value) }} className="container-input" type='text' name='task-name'></TextField>
+                                {/* <Button  variant="contained" >Add</Button> */}
+                                <IconButton onClick={handleAddTask}>
+                                    < AddCircleOutline />
+                                </IconButton>
 
-            {
-                isInputOpen ?
-                    <div onClick={(e) => e.stopPropagation()} className=" flex flex-row w-full justify-between absolute bottom-0 container-input">
-                        <TextField value={taskName || ''} onChange={(e) => { setTaskName(e.target.value) }} className="container-input" label="task name" type='text' name='task-name'></TextField>
-                        <Button onClick={handleAddTask} variant="contained" >Add</Button>
-                    </div>
-                    :
-                    <div className="absolute bottom-0 right-0" style={{ cursor: "pointer" }}>
-                        <IconButton onClick={(e) => { e.stopPropagation(); setIsInputOpen(true) }}>
-                            <AddCircleOutlineIcon />
-                        </IconButton>
-                    </div>
-            }
+                            </div>
+                            :
 
-        </div>
+                            <IconButton className='add-btn' >
+                                <AddIcon style={{ fill: 'white' }} />
+                            </IconButton>
+                    }
+
+                </div>
+            </div >
+
+
+
+        </div >
     );
 };
