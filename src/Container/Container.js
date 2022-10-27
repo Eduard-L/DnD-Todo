@@ -6,13 +6,17 @@ import { Task } from "../Task/Task.js";
 import { useEffect, useState } from "react";
 import React from "react";
 import { Api } from "../utils/myApi.js";
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Button, TextField } from "@mui/material";
 import { getCookie } from "../utils/handleCookies.js";
 import { useSelector } from "react-redux";
 import './Container.css'
 import AddIcon from '@mui/icons-material/Add';
 import { AddCircleOutline } from "@mui/icons-material";
+import { ThemeProvider } from "@emotion/react";
+import { handleInputStyles } from "../utils/materialCustomStyles.js";
+import { DARK, darkColor, lightColor } from "../utils/constants";
+import { Input } from "../Input/Input.js";
+
 
 export const Container = ({
     title,
@@ -22,7 +26,8 @@ export const Container = ({
     containers,
     setContainers,
     // token,
-    onDelete
+    onDelete,
+    handleServerMessages
 }) => {
     const [disableDrag, setDisableDrag] = useState(true);
     const [isInputOpen, setIsInputOpen] = useState(false)
@@ -30,6 +35,9 @@ export const Container = ({
     const { token } = getCookie('token')
     const userInfo = useSelector(state => state.userInfo)
     const { name, email } = userInfo
+    const visibilityMode = useSelector((state) => state.mode)
+    const color = (visibilityMode === DARK) ? darkColor : lightColor;
+    const inputStyles = handleInputStyles(color, 0);
 
     useEffect(() => {
         window.addEventListener('click', handleInputClose)
@@ -184,7 +192,7 @@ export const Container = ({
                 console.log(task)
 
             }
-        }).catch((e) => alert(e))
+        }).catch((e) => handleServerMessages(e.message))
 
 
     }
@@ -233,17 +241,11 @@ export const Container = ({
                 <div onClick={(e) => { e.stopPropagation(); setIsInputOpen(true) }} className="task task_type_add flex flex-col items-center justify-center relative" style={{ justifyContent: 'center', alignItems: "center", opacity: isInputOpen && 1 }}>
                     {
                         isInputOpen ?
-                            <div className=" flex flex-row  w-full container-input">
-                                <TextField value={taskName || ''} onChange={(e) => { setTaskName(e.target.value) }} className="container-input" type='text' name='task-name'></TextField>
-                                {/* <Button  variant="contained" >Add</Button> */}
-                                <IconButton onClick={handleAddTask}>
-                                    < AddCircleOutline />
-                                </IconButton>
 
-                            </div>
+                            <Input inputStyles={inputStyles} color={color} onAdd={handleAddTask} />
                             :
 
-                            <IconButton className='add-btn' >
+                            <IconButton className="add-btn" >
                                 <AddIcon style={{ fill: 'white' }} />
                             </IconButton>
                     }

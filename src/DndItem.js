@@ -10,13 +10,15 @@ export const DndItem = React.memo(({
     _id,
     index,
     children,
-    onHover,
+    onDrag,
     className,
     disAbleDrag,
     handleDropItems,
     setDisbaleDrag,
     type,
     task,
+    items,
+    setItems,
     container,
     onDragToDiffCon,
     title
@@ -60,7 +62,7 @@ export const DndItem = React.memo(({
 
             if (isOver) {
 
-                onHover(dragIndex, hoverIndex);
+                onDrag(dragIndex, hoverIndex, items, setItems);
 
                 item.index = hoverIndex;
             }

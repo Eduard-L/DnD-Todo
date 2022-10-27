@@ -1,0 +1,51 @@
+.board {
+  height: 300px;
+  width: 300px;
+  border: 1px solid red;
+  background-color: transparent;
+  opacity: 0.7;
+  cursor: pointer;
+  transform: scale(1);
+  transition: transform 0.5s, opacity 0.5s;
+  border-radius: 10px;
+}
+.board:hover {
+  transform: scale(1.05);
+  opacity: 1;
+}
+.board__title {
+  max-width: 170px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.edit-icon {
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+.edit-icon:hover {
+  opacity: 0.7;
+}
+.drag-btn {
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+.drag-btn:hover {
+  opacity: 0.5;
+}
+.delete-icon {
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+.delete-icon:hover {
+  opacity: 0.5;
+}
+.add-btn {
+  opacity: 1;
+  transition: opacity 0.3s, transform 0.3s;
+  transform: scale(1);
+}
+.add-btn:hover {
+  opacity: 0.7;
+  transform: scale(1.2);
+}

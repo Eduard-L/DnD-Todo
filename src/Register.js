@@ -11,78 +11,21 @@ import { IconButton } from "@mui/material";
 import { useSelector } from "react-redux";
 import { DARK, darkColor, lightColor } from "./utils/constants";
 import { PreLoader } from "./PreLoader/PreLoader";
+import { handleInputStyles } from './utils/materialCustomStyles'
 
 
 export const Register = ({ text, btnText, handleSubmit, isRegisterFormOpen, subtitleText, path }) => {
 
     const visibilityMode = useSelector((state) => state.mode)
     const isLoading = useSelector((state) => state.isLoading)
+    const { values, handleChange, resetForm, isValid, errors } = useForm()
+    const [isPasswordVisible, setIsPassword] = useState(false)
+    const [isConfirmVisible, setIsConfirmVisible] = useState(false)
 
 
     const color = (visibilityMode === DARK) ? darkColor : lightColor;
 
-    const theme = createTheme({
-        components: {
-            // Name of the component
-            MuiTextField: {
-                styleOverrides: {
-                    // Name of the slot
-                    root: {
-
-                        '& label.Mui-focused': {
-                            color: color,
-                        },
-                        'label': {
-                            color: color,
-                        },
-
-
-                        '& .MuiOutlinedInput-root': {
-                            '& fieldset': {
-                                borderColor: color,
-
-                            },
-                            '&:hover fieldset': {
-                                borderColor: color,
-                            },
-                            '&.Mui-focused fieldset': {
-                                borderColor: color,
-
-
-                            },
-
-                        },
-                    }
-
-                },
-            },
-            MuiInputBase: {
-                styleOverrides: {
-                    root: {
-                        color: color,
-                        background: "transparent"
-                    }
-                }
-            }
-
-        },
-    });
-
-    // const [values, setValues] = useState({
-    //     name: "",
-    //     email: "",
-    //     password: "",
-    //     confirm: ""
-    // })
-
-    // const handleChange = (e) => {
-    //     const { name, value } = e.target
-    //     setValues({ ...values, [name]: value })
-    // }
-
-    const { values, handleChange, resetForm, isValid, errors } = useForm()
-    const [isPasswordVisible, setIsPassword] = useState(false)
-    const [isConfirmVisible, setIsConfirmVisible] = useState(false)
+    const themeForInput = handleInputStyles(color)
 
     return (
         <>
@@ -91,7 +34,7 @@ export const Register = ({ text, btnText, handleSubmit, isRegisterFormOpen, subt
 
                 <Typography color={color} className="text-center" variant="h2">{text}</Typography>
                 <div className="flex flex-col mt-4">
-                    <ThemeProvider theme={theme}>
+                    <ThemeProvider theme={themeForInput}>
                         {
                             isRegisterFormOpen &&
                             <TextField className='mt-2' value={values.name} onChange={handleChange} name="name" type='text' label="Name" required inputProps={{ minLength: 2 }}></TextField>

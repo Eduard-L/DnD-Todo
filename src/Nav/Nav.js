@@ -8,6 +8,8 @@ import Divider from '@mui/material/Divider';
 import { Button, Typography } from "@mui/material"
 import { useSelector } from "react-redux"
 import { DARK } from '../utils/constants';
+import LogoutIcon from '@mui/icons-material/Logout';
+import EditIcon from '@mui/icons-material/Edit';
 
 export const Nav = ({ onSave, onLogOut }) => {
     const userInfo = useSelector(state => state.userInfo)
@@ -29,7 +31,7 @@ export const Nav = ({ onSave, onLogOut }) => {
 
 
     return (
-        <div className="w-full flex flex-row justify-between " style={{ height: '5%', width: 200 }}>
+        <div className="w-full flex flex-row justify-between " style={{ height: '5%', maxHeight: 40, width: 200 }}>
             <IconButton onClick={handleUserIconClick} className='navbar__user-btn'><AccountCircle className='nav__user-icon' style={{ fill: `${isDark ? 'white' : 'black'}` }} /></IconButton>
             <Button className='nav__save-btn' onClick={onSave} variant="outlined">Save Changes</Button>
             <Menu
@@ -51,9 +53,16 @@ export const Nav = ({ onSave, onLogOut }) => {
 
                 <MenuItem disabled style={{ cursor: 'default', opacity: 1 }} >{`Welcome, ${userInfo.name}`}</MenuItem>
                 <Divider />
-                <MenuItem onClick={handleMenuClose}>Edit Profile</MenuItem>
+                <MenuItem className='flex flex-row justify-between' onClick={handleMenuClose}>
+                    <Typography>Edit Profile</Typography>
+                    <EditIcon />
+                </MenuItem>
                 {/* <MenuItem onClick={onSave}>Save Changes</MenuItem> */}
-                <MenuItem onClick={onLogOut}>Logout</MenuItem>
+                <MenuItem className='flex flex-row justify-between' onClick={onLogOut}>
+                    <Typography>Logout</Typography>
+                    <LogoutIcon />
+
+                </MenuItem>
             </Menu>
             {/* <div className="flex flex-row w-1/4 justify-between">
                 <Button onClick={onLogOut} variant="contained">Log Out</Button>

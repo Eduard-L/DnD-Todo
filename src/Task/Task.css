@@ -20,3 +20,22 @@
     width: 28%;
     justify-content: space-between;
   }
+  .task_type_add{
+    opacity: 0.5;
+    cursor: pointer;
+    transition: opacity .3s ease-in-out;
+    border:2px solid white
+  }
+  .task_type_add:hover{
+    opacity: 1;
+  }
+  .add-task-btn{
+    transform: scale(1);
+    transition: transform .3s ease-in;
+
+  }
+  .task_type_add:hover .add-task-btn{
+    transform: scale(1.2);
+    
+  }
+ 

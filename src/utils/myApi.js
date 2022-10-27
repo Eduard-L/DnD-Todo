@@ -126,13 +126,13 @@ class myApi {
         return this._checkResponse(response)
     }
 
-    async handleUpdateUserInfo(token, name, email, containers) {
+    async handleUpdateUserInfo(token, name, email, boards) {
         const response = await fetch(`${this.url}/user`, {
             method: "PUT",
             body: JSON.stringify({
                 name: name,
                 email: email,
-                containers: containers
+                boards: boards
             }),
             headers: {
                 authorization: `Bearer ${token}`,
@@ -174,6 +174,69 @@ class myApi {
         return this._checkResponse(response)
 
     }
+
+    async handleGetBoards(token) {
+        const response = await fetch(`${this.url}/boards`, {
+            method: "GET",
+            headers: {
+                authorization: `Bearer ${token}`,
+                Accept: 'application/json',
+                "Content-Type": "application/json",
+            }
+
+        })
+
+        return this._checkResponse(response)
+    }
+
+    async handleAddNewBoard(token, title) {
+        const response = await fetch(`${this.url}/boards`, {
+            method: "POST",
+            headers: {
+                authorization: `Bearer ${token}`,
+                Accept: 'application/json',
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                title: title
+            })
+
+
+        })
+
+        return this._checkResponse(response)
+    }
+
+    async handleDeleteBoard(token, id) {
+        const response = await fetch(`${this.url}/boards/${id}`, {
+            method: "DELETE",
+            headers: {
+                authorization: `Bearer ${token}`,
+                Accept: 'application/json',
+                "Content-Type": "application/json",
+            },
+        })
+
+        return this._checkResponse(response)
+    }
+
+    async handleUpdateBoard(token, id, title, containers) {
+        const response = await fetch(`${this.url}/boards/${id}`, {
+            method: "PATCH",
+            headers: {
+                authorization: `Bearer ${token}`,
+                Accept: 'application/json',
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                title: title,
+                containers: containers
+            })
+        })
+
+        return this._checkResponse(response)
+    }
 }
+
 const url = 'http://localhost:3001'
 export const Api = new myApi(url)

@@ -1,6 +1,8 @@
+
+
 export const serverMessages = {
     notFound: {
-        message: 'The Asset is not found by the server',
+        message: 'The Asset is not found by the server, try to refresh the page',
         isOpen: true,
         severity: "error"
     },
@@ -55,9 +57,17 @@ const darkModeBackGround = 'linear-gradient(#141e30, #243b55)';
 const lightColor = 'black'
 const ligthModeBackGround = 'white';
 
+const darkContainerColor = 'lightskyblue'
+
 
 const DARK = 'dark';
-const LIGHT = 'light'
+const LIGHT = 'light';
+
+
+
+
+
+
 
 export {
 
@@ -66,6 +76,8 @@ export {
     darkColor,
     darkModeBackGround,
     lightColor,
-    ligthModeBackGround
+    ligthModeBackGround,
+    darkContainerColor
 
 }
+
