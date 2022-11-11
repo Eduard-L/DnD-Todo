@@ -1,26 +1,29 @@
 import "./App.css";
 import { useCallback, useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import { Register } from "./Register";
-import { Api } from "./utils/myApi";
+import { Register } from "../Register/Register";
+import { Api } from "../utils/myApi";
 import { useNavigate } from "react-router-dom";
-import { deleteCookie, getCookie, setCookie } from "./utils/handleCookies";
-import { ProtectedComponent } from "./ProtectedComponent";
-import { Main } from "./Main/Main";
+import { deleteCookie, getCookie, setCookie } from "../utils/handleCookies";
+import { ProtectedComponent } from "../ProtectedComponent";
+import { Boards } from "../Boards/Boards";
 import { useSelector, useDispatch } from "react-redux";
-import { setUserInfo } from "./redux/userInfoSlice";
-import { PopupWithMessage } from "./PopupWithMessage";
-import { setPopupMessage } from "./redux/popupMessageSlice";
-import { DARK, darkModeBackGround, serverMessages, ligthModeBackGround, LIGHT } from "./utils/constants";
-
+import { setUserInfo } from "../redux/userInfoSlice";
+import { PopupWithMessage } from "../PopupWithMessage/PopupWithMessage";
+import { setPopupMessage } from "../redux/popupMessageSlice";
+import { Container } from '../Container/Container'
+import { DARK, darkModeBackGround, serverMessages, ligthModeBackGround, LIGHT, darkColor, lightColor } from "../utils/constants";
+import { Nav } from "../Nav/Nav";
 
 // import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-import { setVisibilityMode } from "./redux/visibilityModeSlice";
+import { setVisibilityMode } from "../redux/visibilityModeSlice";
 // import { PreLoader } from "./PreLoader/PreLoader";
-import { setIsLoading } from "./redux/isLoadingSlice";
-import { MaterialUISwitch } from "./utils/materialCustomStyles";
+import { setIsLoading } from "../redux/isLoadingSlice";
+import { MaterialUISwitch } from "../utils/materialCustomStyles";
+import { Foooter } from "../Footer/Footer";
+import { Containers } from "../Containers/Containers";
 // import { PopupWithQuestion } from "./PopupWithQuestion/PopupWithQuestion";
 
 
@@ -32,12 +35,10 @@ import { MaterialUISwitch } from "./utils/materialCustomStyles";
 export default function App() {
   const [containers, setContainers] = useState([]);
   const [boards, setBoards] = useState([])
-  const [task, setTask] = useState("");
-  const [disableDrag, setDisableDrag] = useState(true);
   const navigate = useNavigate()
   const [token, setToken] = useState(getCookie('token').token || '')
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [conTitle, setConTitle] = useState("");
+  // const [conTitle, setConTitle] = useState("");
   const dispatch = useDispatch()
   const userInfo = useSelector((state) => state.userInfo)
   const messageState = useSelector((state) => state.message)
@@ -46,7 +47,7 @@ export default function App() {
 
   const background = (visibilityMode === DARK) ? darkModeBackGround : ligthModeBackGround
 
-
+  const color = (visibilityMode === DARK) ? darkColor : lightColor;
   const handleServerMessages = useCallback((status) => {
 
     if (!status) return
@@ -87,6 +88,9 @@ export default function App() {
       case 'confirm error':
         dispatch(setPopupMessage({ message: "The password and confirmation do not match", severity: "error", isOpen: true }))
         break;
+      default:
+
+        dispatch(setPopupMessage({ message: 'Ooops something went wrong', severity: "error", isOpen: true }));
     }
 
   }, [])
@@ -114,7 +118,6 @@ export default function App() {
 
   const handleUpdateUserInfo = () => {
 
-    console.log('1')
     Api.handleUpdateUserInfo(token, userInfo.name, userInfo.email, boards).then((userInfo) => {
       if (userInfo) {
         handleServerMessages('200')
@@ -122,24 +125,32 @@ export default function App() {
     }).catch((e) => handleServerMessages(e.message))
   }
 
-  const handleAddContainer = (e) => {
-    e.preventDefault();
-    const seq = containers.length;
-    Api.createNewContainer(conTitle, token, seq).then((container) => {
+  const handleAddContainer = (conTitle, boardId) => {
+    // e.preventDefault();
+
+    // const seq = containers.length;
+    Api.createNewContainer(conTitle, token, [], boardId).then((container) => {
       if (container) {
-        const newContainers = [...containers, container]
-        Api.handleUpdateUserInfo(token, userInfo.name, userInfo.email, newContainers).then((userInfo) => {
+
+        const newBoards = [...boards].map((b) => {
+          if (b._id === boardId) {
+            const newCons = [...b.containers, container]
+            return { ...b, containers: newCons }
+          }
+          return b
+        })
+        Api.handleUpdateUserInfo(token, userInfo.name, userInfo.email, newBoards).then((userInfo) => {
           if (userInfo) {
-            setContainers(userInfo.containers);
+            setBoards(newBoards)
             handleServerMessages('200')
 
           }
-        })
+        }).catch((e) => handleServerMessages(e.message))
 
       }
     }).catch((e) => handleServerMessages(e.message))
 
-    setConTitle("");
+    // setConTitle("");
   };
 
   const handleAddTask = (e, id) => {
@@ -162,7 +173,7 @@ export default function App() {
     const newCont = [...containers];
     const dragItem = containers[dragIndex];
     if (!dragItem) return
-    console.log(dragItem)
+
 
     newCont.splice(dragIndex, 1);
     newCont.splice(hoverIndex, 0, dragItem);
@@ -231,20 +242,37 @@ export default function App() {
     })
   }
 
-  const handleDeleteContainer = (id) => {
+  const handleDeleteContainer = (containerId, boardId) => {
 
-    Api.handleDeleteCon(token, id)
-      .then((res) => {
-        if (res) {
-          const newCons = containers.filter((c) => c._id !== id);
-          setContainers(newCons);
-          Api.handleUpdateUserInfo(token, userInfo.name, userInfo.email, newCons)
-          handleServerMessages('200')
+    const newBoards = [...boards].map((b) => {
+      if (b._id === boardId) {
+        const newContainers = [...b.containers].filter((c) => c._id !== containerId)
+        return { ...b, containers: newContainers }
+      }
+      return b
+    })
+
+    Promise.all([Api.handleDeleteCon(token, containerId), Api.handleUpdateUserInfo(token, userInfo.name, userInfo.email, newBoards)]).then((data) => {
+      if (data) {
+        const userInfo = data[1];
+        setBoards(userInfo.boards)
+        dispatch(setUserInfo(userInfo))
+        handleServerMessages('200')
+      }
+    }).catch((e) => handleServerMessages(e.message))
+
+    // Api.handleDeleteCon(token, containerId)
+    //   .then((container) => {
+    //     if (container) {
+    //       const newCons = containers.filter((c) => c._id !== containerId);
+    //       setContainers(newCons);
+    //       Api.handleUpdateUserInfo(token, userInfo.name, userInfo.email, newCons)
+    //       handleServerMessages('200')
 
 
 
-        }
-      }).catch((e) => handleServerMessages(e.message))
+    //     }
+    //   }).catch((e) => handleServerMessages(e.message))
 
   };
 
@@ -271,42 +299,64 @@ export default function App() {
 
       }).catch((e) => handleServerMessages(e.message))
   }
-  const handleDeleteBoard = (id, closePopup) => {
+  const handleDeleteBoard = (id) => {
     const newBoards = [...boards].filter((b) => b._id !== id)
     Promise.all([Api.handleDeleteBoard(token, id), Api.handleUpdateUserInfo(token, userInfo.name, userInfo.email, newBoards)]).then((data) => {
-      const userInfo = data[1];
-      if (userInfo) {
+
+      if (data) {
+        const userInfo = data[1];
         setBoards(userInfo.boards)
         dispatch(setUserInfo(userInfo))
-        closePopup()
+
       }
     }).catch((e) => handleServerMessages(e.message))
 
   }
 
-  const handleUpdateBoardInfo = (e, id, title, containers, closePopup) => {
+  const handleUpdateBoardInfo = (e, values) => {
 
-    console.log(id)
+    let containers;
     e.preventDefault()
     const newBoards = [...boards].map((b) => {
-      if (b._id === id) {
-        return { ...b, title: title, containers: containers }
+      if (b._id === values.id) {
+        containers = [...b.containers];
+        return { ...b, title: values.title }
       }
       return b
     })
-    Promise.all([Api.handleUpdateBoard(token, id, title, containers), Api.handleUpdateUserInfo(token, userInfo.name, userInfo.email, newBoards)]).then((data) => {
+    Promise.all([Api.handleUpdateBoard(token, values.id, values.title, containers), Api.handleUpdateUserInfo(token, userInfo.name, userInfo.email, newBoards)]).then((data) => {
       if (data) {
         setBoards(data[1].boards)
         dispatch(setUserInfo(data[1]))
-        closePopup()
+        handleServerMessages('200')
+
       }
     }).catch((e) => handleServerMessages(e.message))
   }
+
+  const handleUpdateUserProfile = (e, values, boards) => {
+    // console.log(boards)
+    e.preventDefault()
+    Api.handleUpdateUserInfo(token, values.name, values.email, boards).then((userInfo) => {
+      if (userInfo) {
+        dispatch(setUserInfo(userInfo))
+        handleServerMessages('200')
+
+      }
+    }).catch((e) => handleServerMessages(e.message))
+
+  }
+
+
 
 
 
   return (
-    <div className="App justify-center h-screen w-screen" style={{ background: background }}>
+    <div className="App justify-center h-screen w-screen" style={{ background: background, justifyContent: isLoggedIn && 'flex-start' }}>
+      {isLoggedIn &&
+
+        <Nav boards={boards} onUpdateUser={handleUpdateUserProfile} onSave={handleUpdateUserInfo} onLogOut={handleLogOut} />
+      }
 
       <FormControlLabel
         className="absolute top-2 right-1"
@@ -317,37 +367,47 @@ export default function App() {
         <Route path="/signup" element={<Register handleSubmit={handleRegistration} path='/' text='SignUp' btnText='Create' isRegisterFormOpen={true} subtitleText='Click Here To Log In' />} />
         <Route path="/" element={<Register handleSubmit={handleLogIn} text='Login' path='/signup' btnText='Log In' subtitleText='Click Here To Sign Up' isRegisterFormOpen={false} />} />
         <Route path="/boards" element={<ProtectedComponent
-          Component={Main}
+          Component={Boards}
           isLoggedIn={isLoggedIn}
-          handleAddContainer={handleAddContainer}
-          conTitle={conTitle}
-          setConTitle={setConTitle}
-          handleAddTask={handleAddTask}
-          handleServerMessages={handleServerMessages}
-          userInfo={userInfo}
-          task={task}
-          setTask={setTask}
-          containers={containers}
-          handleDragItem={handleDragItem}
-          disableDrag={disableDrag}
-          setDisableDrag={setDisableDrag}
-          setContainers={setContainers}
-          token={token}
           onLogOut={handleLogOut}
           onSave={handleUpdateUserInfo}
-          onDeleteCon={handleDeleteContainer}
+          // onDeleteCon={handleDeleteContainer}
           setBoards={setBoards}
           boards={boards}
           onAddBoard={handleAddNewBoard}
           handleDragItems={handleDragItems}
           onDelete={handleDeleteBoard}
           onUpdate={handleUpdateBoardInfo}
+          onUpdateUser={handleUpdateUserInfo}
+
+        />} />
+        <Route path="/boards/:boardId/containers" element={<ProtectedComponent
+          handleServerMessages={handleServerMessages}
+          Component={Containers}
+          isLoggedIn={isLoggedIn}
+          onAddContainer={handleAddContainer}
+          onLogOut={handleLogOut}
+          onSave={handleUpdateUserInfo}
+          onDeleteCon={handleDeleteContainer}
+          setBoards={setBoards}
+          boards={boards}
+          token={token}
+
+
+          // onAddBoard={handleAddNewBoard}
+          handleDragItems={handleDragItems}
+          onDelete={handleDeleteBoard}
+          onUpdate={handleUpdateBoardInfo}
+          onUpdateUser={handleUpdateUserProfile}
+
 
         />} />
 
       </Routes>
 
-
+      {/* {
+        isLoggedIn && <Foooter color={color} />
+      } */}
 
       <PopupWithMessage isOpen={messageState.isOpen} message={messageState.message} severity={messageState.severity} />
     </div>

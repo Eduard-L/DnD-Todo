@@ -4,44 +4,40 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-
-
-.register-form{
+.register-form {
   width: 400px;
-  background: rgba(0,0,0,.5);
-  box-shadow: 0 15px 25px rgba(0,0,0,.6);
-
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
 }
-.login-btn:disabled{
+.login-btn:disabled {
   opacity: 0.5;
 }
-.login-btn{
+.login-btn {
   opacity: 1;
- 
 }
 
-.login-btn:hover{
+.login-btn:hover {
   background-color: transparent;
   opacity: 0.7;
   transition: opacity 0.5s ease;
 }
-.login-subtitle{
+.login-subtitle {
   transition: opacity 0.3s ease-in-out;
   text-decoration: underline;
 }
-.login-subtitle:hover{
+.login-subtitle:hover {
   opacity: 0.8;
 }
-.lottie-animation{
+.lottie-animation {
   height: 170px;
   position: absolute;
-  top:0;
-  left:0;
+  top: 0;
+  left: 0;
 }

@@ -68,12 +68,15 @@ class myApi {
         return this._checkResponse(response)
     }
 
-    async createNewContainer(title, token, seq) {
-        const response = await fetch(`${this.url}/container`, {
+    async createNewContainer(title, token, tasks, boardId) {
+
+        const response = await fetch(`${this.url}/boards/container`, {
             method: "POST",
             body: JSON.stringify({
                 title: title,
-                seq: seq
+                boardId: boardId,
+                tasks: tasks
+
             }),
             headers: {
                 authorization: `Bearer ${token}`,
@@ -111,11 +114,11 @@ class myApi {
         return this._checkResponse(response)
     }
 
-    async handleUpdateCon(token, id, seq) {
-        const response = await fetch(`${this.url}/containers/${id}`, {
+    async handleUpdateCon(token, id, values) {
+        const response = await fetch(`${this.url}/boards/containers/${id}`, {
             method: 'PUT',
             body: JSON.stringify({
-                seq: seq
+                title: values.title
             }),
             headers: {
                 authorization: `Bearer ${token}`,
@@ -234,6 +237,23 @@ class myApi {
             })
         })
 
+        return this._checkResponse(response)
+    }
+
+    async handleUpdateTask(token, title, description, containerId, taskId) {
+        const des = description ? description : ""
+        const response = await fetch(`${this.url}/containers/${containerId}/task/${taskId}`, {
+            method: "PATCH",
+            headers: {
+                authorization: `Bearer ${token}`,
+                Accept: 'application/json',
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                title: title,
+                description: des
+            })
+        })
         return this._checkResponse(response)
     }
 }

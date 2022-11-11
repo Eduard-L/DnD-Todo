@@ -15,7 +15,13 @@ export const useForm = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target
-        setValues({ ...values, [name]: value })
+        console.log(name)
+        if (name === 'title') {
+            setValues({ ...values, [name]: value.toUpperCase() })
+        } else {
+            setValues({ ...values, [name]: value })
+        }
+
         setErrors({
             ...errors,
             [name]: e.target.validationMessage
@@ -37,5 +43,5 @@ export const useForm = () => {
         },
         [setValues, setErrors, setIsValid]);
 
-    return { values, handleChange, resetForm, isValid, errors }
+    return { values, handleChange, resetForm, isValid, errors, setValues, setIsValid, setErrors }
 };

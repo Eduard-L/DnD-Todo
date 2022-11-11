@@ -1,41 +1,42 @@
-.task-text{
-    min-width: 165px;
-    color:#03e9f4;
-  }
+.task-text {
+  min-width: 165px;
 
-  .task {
-    border: 2px solid #03e9f4;
-    margin-top: 10px; 
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    height: 50px;
-    border-radius: 10px;
-  }
-  .task-icons-con {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: 28%;
-    justify-content: space-between;
-  }
-  .task_type_add{
-    opacity: 0.5;
-    cursor: pointer;
-    transition: opacity .3s ease-in-out;
-    border:2px solid white
-  }
-  .task_type_add:hover{
-    opacity: 1;
-  }
-  .add-task-btn{
-    transform: scale(1);
-    transition: transform .3s ease-in;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
 
-  }
-  .task_type_add:hover .add-task-btn{
-    transform: scale(1.2);
-    
-  }
- 
+.task {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.task-icons-con {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 28%;
+  justify-content: space-between;
+}
+.task_type_add {
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 0.3s ease-in-out;
+  justify-content: center;
+  align-items: center;
+}
+.task_type_add:hover {
+  opacity: 1;
+}
+.add-task-btn {
+  transform: scale(1);
+  transition: transform 0.3s ease-in;
+}
+.task_type_add:hover .add-task-btn {
+  transform: scale(1.2);
+}

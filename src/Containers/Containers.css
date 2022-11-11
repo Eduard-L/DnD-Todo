@@ -1,4 +1,5 @@
-.error-text {
+.con__title {
+  max-width: 90%;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;

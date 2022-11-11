@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 body {
- 
   margin: 0;
   box-sizing: border-box;
 }
@@ -23,7 +22,6 @@ body {
   cursor: grab;
 }
 .App {
-  
   padding: 10px;
   margin: 0px;
   display: flex;
@@ -50,9 +48,6 @@ body {
 }
 
 .tasks-wrapper {
-  
-  width: 90%;
+  width: 100%;
   padding: 10px;
 }
-
-

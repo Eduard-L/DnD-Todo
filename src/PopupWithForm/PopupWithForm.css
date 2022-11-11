@@ -1,0 +1,16 @@
+.save-btn {
+  color: white;
+  background-color: black;
+}
+.save-btn:hover {
+  color: black;
+  background-color: white;
+  border: 1px solid black;
+}
+.save-btn_type_disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+fieldset:focus {
+  border: 2px solid black;
+}

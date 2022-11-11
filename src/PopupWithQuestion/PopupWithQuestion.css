@@ -1,0 +1,22 @@
+.ok-btn {
+  color: white;
+  background-color: red;
+  width: 80px;
+}
+
+.ok-btn:hover {
+  color: red;
+  background-color: white;
+  border: 1px solid red;
+}
+.cancel-btn {
+  color: white;
+  background-color: black;
+  width: 80px;
+}
+.cancel-btn:hover {
+  color: black;
+  background-color: white;
+  width: 80px;
+  border: 1px solid black;
+}

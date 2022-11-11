@@ -2,16 +2,16 @@ import { Button, TextField, Typography } from "@mui/material"
 import { useState } from "react"
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Link } from "react-router-dom";
-import { useForm } from './utils/useForm'
+import { useForm } from '../utils/useForm'
 import Lottie from "lottie-react";
-import lottieSrc from './assets/lottie/95434-history.json'
+import lottieSrc from '../assets/lottie/95434-history.json'
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { InputAdornment } from '@mui/material';
 import { IconButton } from "@mui/material";
 import { useSelector } from "react-redux";
-import { DARK, darkColor, lightColor } from "./utils/constants";
-import { PreLoader } from "./PreLoader/PreLoader";
-import { handleInputStyles } from './utils/materialCustomStyles'
+import { DARK, darkColor, lightColor } from "../utils/constants";
+import { PreLoader } from "../PreLoader/PreLoader";
+import { handleInputStyles } from '../utils/materialCustomStyles'
 
 
 export const Register = ({ text, btnText, handleSubmit, isRegisterFormOpen, subtitleText, path }) => {
@@ -30,14 +30,14 @@ export const Register = ({ text, btnText, handleSubmit, isRegisterFormOpen, subt
     return (
         <>
             <Lottie className='lottie-animation' animationData={lottieSrc} loop={true} />
-            <form onSubmit={(e) => handleSubmit(e, values)} className="flex flex-col register-form p-6 rounded-xl ">
+            <form onSubmit={(e) => handleSubmit(e, values)} className="flex flex-col register-form p-6 rounded-xl " style={{ backgroundColor: (visibilityMode !== DARK) && 'rgba(0,0,0,.1)' }}>
 
                 <Typography color={color} className="text-center" variant="h2">{text}</Typography>
                 <div className="flex flex-col mt-4">
                     <ThemeProvider theme={themeForInput}>
                         {
                             isRegisterFormOpen &&
-                            <TextField className='mt-2' value={values.name} onChange={handleChange} name="name" type='text' label="Name" required inputProps={{ minLength: 2 }}></TextField>
+                            <TextField InputProps={{ minLength: 2, maxLength: 30 }} className='mt-2' value={values.name} onChange={handleChange} name="name" type='text' label="Name" required inputProps={{ minLength: 2 }}></TextField>
                         }
                         {
                             errors.name && isRegisterFormOpen &&
@@ -51,6 +51,7 @@ export const Register = ({ text, btnText, handleSubmit, isRegisterFormOpen, subt
                             <Typography color='error' className="" variant="subtitle1" > {errors.email}</Typography>
                         }
                         <TextField InputProps={{
+
                             endAdornment: (
                                 <InputAdornment position="end">
                                     <IconButton
@@ -63,7 +64,7 @@ export const Register = ({ text, btnText, handleSubmit, isRegisterFormOpen, subt
                             )
 
 
-                        }} value={values.password} onChange={handleChange} name="password" className="mt-4" type={!isPasswordVisible ? 'password' : 'text'} label="Password" required inputProps={{ minLength: 6 }}></TextField>
+                        }} value={values.password} inputProps={{ minLength: 8 }} onChange={handleChange} name="password" className="mt-4" type={!isPasswordVisible ? 'password' : 'text'} label="Password" required ></TextField>
                         {
                             errors.password &&
                             <Typography color='error' className="" variant="subtitle1" > {errors.password}</Typography>
@@ -74,7 +75,8 @@ export const Register = ({ text, btnText, handleSubmit, isRegisterFormOpen, subt
 
                             isRegisterFormOpen &&
                             <TextField InputProps={{
-                                endAdornment: (
+
+                                endadornment: (
                                     <InputAdornment position="end">
                                         <IconButton
 
@@ -86,7 +88,7 @@ export const Register = ({ text, btnText, handleSubmit, isRegisterFormOpen, subt
                                 )
 
 
-                            }} style={{ color: color }} value={values.confirm} onChange={handleChange} name="confirm" className="mt-4" type={!isConfirmVisible ? 'password' : 'text'} label="Confirm" required inputProps={{ minLength: 6 }}></TextField>
+                            }} inputProps={{ minLength: 8 }} style={{ color: color }} value={values.confirm} onChange={handleChange} name="confirm" className="mt-4" type={!isConfirmVisible ? 'password' : 'text'} label="Confirm" required ></TextField>
 
 
                         }

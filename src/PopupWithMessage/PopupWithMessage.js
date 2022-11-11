@@ -1,6 +1,6 @@
 import { Snackbar, Alert, IconButton } from "@mui/material"
 import { useDispatch } from "react-redux"
-import { setIsOpen, setPopupMessage } from "./redux/popupMessageSlice"
+import { setIsOpen, setPopupMessage } from "../redux/popupMessageSlice"
 
 export const PopupWithMessage = ({ isOpen, message, severity }) => {
 

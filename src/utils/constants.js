@@ -55,7 +55,7 @@ const darkColor = '#03e9f4';
 const darkModeBackGround = 'linear-gradient(#141e30, #243b55)';
 
 const lightColor = 'black'
-const ligthModeBackGround = 'white';
+const ligthModeBackGround = 'whitesmoke';
 
 const darkContainerColor = 'lightskyblue'
 

@@ -5,10 +5,16 @@
   flex-direction: row;
 }
 .boards {
-  height: 90%;
   width: 100%;
+  margin-top: 25px;
   display: inline-flex;
   flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
+}
+.btn_type_show-input {
+  transition: transform 0.3s;
+}
+.board_type_add:hover .btn_type_show-input {
+  transform: scale(1.2);
 }

@@ -5,7 +5,7 @@ export const visibilityMode = createSlice({
     initialState: DARK,
     reducers: {
         setVisibilityMode: (state, action) => {
-            console.log(state)
+
             state = action.payload
             return state
         }

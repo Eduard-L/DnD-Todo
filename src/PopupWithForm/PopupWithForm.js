@@ -1,14 +1,16 @@
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { handleInputStyles } from '../utils/materialCustomStyles';
+import { ThemeProvider } from "@emotion/react";
 
-import { Button, TextField } from '@mui/material';
+import { Button } from '@mui/material';
 
 import './PopupWithForm.css'
 
-export const PopupWithForm = ({ isPopupOpen, setIsPopupOpen, formTitle, values, setValues, onSubmit }) => {
+export const PopupWithForm = ({ isPopupOpen, setIsPopupOpen, formTitle, values, onSubmit, children, closeProfileMenu, isValid }) => {
+
+    const inputStyles = handleInputStyles('black')
 
     const handleClose = () => {
         setIsPopupOpen(false)
@@ -26,22 +28,15 @@ export const PopupWithForm = ({ isPopupOpen, setIsPopupOpen, formTitle, values, 
                     {formTitle}
                 </DialogTitle>
                 <DialogContent className='p-0 mt-5' >
-                    {/* <DialogContentText id="alert-dialog-description"> */}
-                    <form className='popup__form flex flex-col' onSubmit={(e) => { onSubmit(e, values.id, values.title, [], handleClose) }}>
+                    <form className='popup__form flex flex-col' onSubmit={(e) => { onSubmit(e, values); handleClose(); closeProfileMenu && closeProfileMenu(false) }}>
+                        <ThemeProvider theme={inputStyles}>
+                            {children}
 
-                        <TextField
-                            type='text'
-                            label='Title'
-                            className='mt-2'
-                            value={values.title || ''}
-                            onChange={(e) => { setValues({ ...values, title: e.target.value }) }}
-                        ></TextField>
-
-                        <Button type="submit" className='w-full mt-10' variant='outlined' onClick={() => { }} autoFocus>
-                            Save
-                        </Button>
+                            <Button style={{ height: 50 }} type="submit" className={`w-full mt-10 save-btn ${!isValid && 'save-btn_type_disabled'} `} variant='outlined' autoFocus>
+                                Save
+                            </Button>
+                        </ThemeProvider>
                     </form>
-                    {/* </DialogContentText> */}
                 </DialogContent>
                 {/* <DialogActions className='flex items-center justify-center p-0 mt-10'>
 
