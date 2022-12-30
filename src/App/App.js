@@ -1,6 +1,6 @@
 import "./App.css";
 import { useCallback, useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Register } from "../Register/Register";
 import { Api } from "../utils/myApi";
 import { useNavigate } from "react-router-dom";
@@ -11,25 +11,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { setUserInfo } from "../redux/userInfoSlice";
 import { PopupWithMessage } from "../PopupWithMessage/PopupWithMessage";
 import { setPopupMessage } from "../redux/popupMessageSlice";
-import { Container } from '../Container/Container'
 import { DARK, darkModeBackGround, serverMessages, ligthModeBackGround, LIGHT, darkColor, lightColor } from "../utils/constants";
 import { Nav } from "../Nav/Nav";
-
-// import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-
 import { setVisibilityMode } from "../redux/visibilityModeSlice";
-// import { PreLoader } from "./PreLoader/PreLoader";
-import { setIsLoading } from "../redux/isLoadingSlice";
+import { isLoading, setIsLoading } from "../redux/isLoadingSlice";
 import { MaterialUISwitch } from "../utils/materialCustomStyles";
-import { Foooter } from "../Footer/Footer";
 import { Containers } from "../Containers/Containers";
-// import { PopupWithQuestion } from "./PopupWithQuestion/PopupWithQuestion";
-
-
-
-
-
 
 
 export default function App() {
@@ -42,7 +30,10 @@ export default function App() {
   const dispatch = useDispatch()
   const userInfo = useSelector((state) => state.userInfo)
   const messageState = useSelector((state) => state.message)
-  const visibilityMode = useSelector((state) => state.mode)
+  const visibilityMode = useSelector((state) => state.mode);
+  const location = localStorage.getItem('location');
+
+
 
 
   const background = (visibilityMode === DARK) ? darkModeBackGround : ligthModeBackGround
@@ -102,7 +93,11 @@ export default function App() {
           dispatch(setUserInfo(user))
           setBoards(user.boards)
           setIsLoggedIn(true)
-          navigate('/boards')
+          if (location) {
+            navigate(location)
+          }
+
+          // navigate('/boards')
         } else {
           setIsLoggedIn(false)
           navigate('/')
@@ -196,6 +191,7 @@ export default function App() {
 
   const handleRegistration = (e, formValues) => {
     e.preventDefault()
+    dispatch(setIsLoading(true))
     const { password, confirm } = formValues
     if (password !== confirm) {
       handleServerMessages('confirm error')
@@ -211,6 +207,8 @@ export default function App() {
 
     }).catch((e) => {
       handleServerMessages(e.message)
+    }).finally(() => {
+      dispatch(setIsLoading(false))
     })
   }
 
@@ -220,7 +218,8 @@ export default function App() {
     navigate('/')
     setToken('')
     setUserInfo({})
-    setContainers([])
+    setContainers([]);
+    localStorage.removeItem('location')
   }
 
   const handleLogIn = (e, formValues) => {
@@ -242,7 +241,9 @@ export default function App() {
     })
   }
 
-  const handleDeleteContainer = (containerId, boardId) => {
+  const handleDeleteContainer = (containerId, boardId, postSubmitCallBack) => {
+    debugger
+    dispatch(setIsLoading(true))
 
     const newBoards = [...boards].map((b) => {
       if (b._id === boardId) {
@@ -258,21 +259,12 @@ export default function App() {
         setBoards(userInfo.boards)
         dispatch(setUserInfo(userInfo))
         handleServerMessages('200')
+        postSubmitCallBack();
       }
     }).catch((e) => handleServerMessages(e.message))
-
-    // Api.handleDeleteCon(token, containerId)
-    //   .then((container) => {
-    //     if (container) {
-    //       const newCons = containers.filter((c) => c._id !== containerId);
-    //       setContainers(newCons);
-    //       Api.handleUpdateUserInfo(token, userInfo.name, userInfo.email, newCons)
-    //       handleServerMessages('200')
-
-
-
-    //     }
-    //   }).catch((e) => handleServerMessages(e.message))
+      .finally(() => {
+        dispatch(setIsLoading(false))
+      })
 
   };
 
@@ -286,7 +278,7 @@ export default function App() {
   }
 
   const handleAddNewBoard = (title) => {
-
+    dispatch(setIsLoading(true))
     Api.handleAddNewBoard(token, title)
       .then((board) => {
         const newBoards = [...boards, board]
@@ -294,12 +286,18 @@ export default function App() {
           if (userInfo) {
             setBoards(userInfo.boards)
             dispatch(setUserInfo(userInfo))
+            handleServerMessages('200')
+            dispatch(setIsLoading(false))
           }
         }).catch((e) => handleServerMessages(e.message))
 
       }).catch((e) => handleServerMessages(e.message))
+      .finally(() => dispatch(setIsLoading(false)))
   }
-  const handleDeleteBoard = (id) => {
+  const handleDeleteBoard = (id, boardId, postSubmitHandler) => {
+
+    dispatch(setIsLoading(true))
+
     const newBoards = [...boards].filter((b) => b._id !== id)
     Promise.all([Api.handleDeleteBoard(token, id), Api.handleUpdateUserInfo(token, userInfo.name, userInfo.email, newBoards)]).then((data) => {
 
@@ -307,43 +305,53 @@ export default function App() {
         const userInfo = data[1];
         setBoards(userInfo.boards)
         dispatch(setUserInfo(userInfo))
+        handleServerMessages('200');
+        postSubmitHandler();
 
       }
     }).catch((e) => handleServerMessages(e.message))
+      .finally(() => dispatch(setIsLoading(false)))
 
   }
 
-  const handleUpdateBoardInfo = (e, values) => {
-
+  const handleUpdateBoardInfo = (e, values, postCallBack) => {
+    dispatch(setIsLoading(true))
     let containers;
     e.preventDefault()
     const newBoards = [...boards].map((b) => {
       if (b._id === values.id) {
         containers = [...b.containers];
-        return { ...b, title: values.title }
+        return { ...b, title: values.title, img: values.img }
       }
       return b
     })
-    Promise.all([Api.handleUpdateBoard(token, values.id, values.title, containers), Api.handleUpdateUserInfo(token, userInfo.name, userInfo.email, newBoards)]).then((data) => {
+    Promise.all([Api.handleUpdateBoard(token, values.id, values.title, containers, values.img), Api.handleUpdateUserInfo(token, userInfo.name, userInfo.email, newBoards)]).then((data) => {
       if (data) {
         setBoards(data[1].boards)
         dispatch(setUserInfo(data[1]))
-        handleServerMessages('200')
+        handleServerMessages('200');
+        postCallBack()
 
       }
     }).catch((e) => handleServerMessages(e.message))
+      .finally(() => {
+        dispatch(setIsLoading(false))
+      })
   }
 
-  const handleUpdateUserProfile = (e, values, boards) => {
-    // console.log(boards)
+  const handleUpdateUserProfile = (e, values, postSubmitCallBack, boards) => {
+
     e.preventDefault()
+    dispatch(setIsLoading(true))
     Api.handleUpdateUserInfo(token, values.name, values.email, boards).then((userInfo) => {
       if (userInfo) {
         dispatch(setUserInfo(userInfo))
-        handleServerMessages('200')
+        handleServerMessages('200');
+        postSubmitCallBack();
 
       }
     }).catch((e) => handleServerMessages(e.message))
+      .finally(() => dispatch(setIsLoading(false)))
 
   }
 

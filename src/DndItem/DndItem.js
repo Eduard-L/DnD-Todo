@@ -97,13 +97,12 @@ export const DndItem = React.memo(({
         }),
         isDragging: (monitor) => {
             return monitor.getItem()._id === _id
-            // console.log(monitor.getItem()._id)
+
         }
     });
 
     opacity = isDragging ? 0 : 1;
 
-    // const opacity = isOver ? 0 : 1
 
     drag(drop(ref));
     return (

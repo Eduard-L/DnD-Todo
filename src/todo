@@ -1,11 +1,21 @@
 check what do first : delete for DB or update user INFO | at the same time ? 
 add owner to models as a user owner ! 
 backend - making order 
-back btn 
-onDrop save user info 
 drop in empty container 
-task click --> edit & add list 
 img --- > board & profile --> if image in not available set the default ! 
-deploy the app 
-upperCase titles ? 
+if width 450 px block the app 
+deploy the app
 
+
+
+
+//1- BACKEND- JOI VALIDATION;
+// 2-Back + front - לבדוק את כל הריקווסטים ולראות אם הכתובות URL הגיוניות !
+//3 לעבור על ריקווסטים בפרונט ולראות טוב טוב שזה מבוצע כמו שצריך לפי הסדר הכי נכון ! 
+//3 - להחליט איך מכניסים תמונה --- > ולהוסיף לבקשה הרלוונטית ביצירת יוזר-- > באמצעות קישור / ברירת מחדל ף
+7 // תמונת פרופיל יוזר ! 
+9 // למצוא דרך לגרור לקונטיינר חדש 
+10 // להשוות בין בקאנד שלי לפרוייקט גמר ולראות האם חסר משהו 
+11 // בדיקות בק לפני העלאה ! 
+12// Loader בכל בקשה !
+13 // update all handlers for update info !

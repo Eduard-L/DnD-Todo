@@ -14,12 +14,14 @@ import { PopupWithForm } from '../PopupWithForm/PopupWithForm';
 import { TextField } from '@mui/material';
 import { darkColor, lightColor } from "../utils/constants";
 import { useForm } from '../utils/useForm';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+
 
 export const Nav = ({ onSave, onLogOut, onUpdateProfile, boards, onUpdateUser }) => {
     const userInfo = useSelector(state => state.userInfo)
     const visibilityMode = useSelector(state => state.mode)
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const params = useParams()
     const isDark = visibilityMode === DARK;
     const color = (visibilityMode === DARK) ? darkColor : lightColor;
     const [anchorEl, setAnchorEl] = useState(null);
@@ -52,7 +54,13 @@ export const Nav = ({ onSave, onLogOut, onUpdateProfile, boards, onUpdateUser })
         <div className="w-full flex flex-row  " style={{ height: '5%', maxHeight: 40 }}>
             <IconButton onClick={handleUserIconClick} className='navbar__user-btn'><AccountCircle className='nav__user-icon' style={{ fill: `${isDark ? 'white' : 'black'}` }} /></IconButton>
             {/* <Button style={{ color: color, border: `2px solid ${color}` }} className='nav__save-btn ml-4' onClick={onSave} variant="outlined">Save Changes</Button> */}
-            <Button style={{ color: color, border: `2px solid ${color}` }} className='nav__save-btn ml-4' onClick={() => navigate('/boards')} variant="outlined">Back To Boards</Button>
+            {
+
+                !(window.location.href.endsWith('/boards')) ? <Button style={{ color: color, border: `2px solid ${color}` }} className='nav__save-btn ml-4' onClick={() => navigate('/boards')} variant="outlined">Back To Boards</Button>
+                    : ""
+
+            }
+            {/* <Button style={{ color: color, border: `2px solid ${color}` }} className='nav__save-btn ml-4' onClick={() => navigate('/boards')} variant="outlined">Back To Boards</Button> */}
             <Menu
                 id="demo-positioned-menu"
                 style={{ backgroundColor: 'rgba(1,1,1,0.5)' }}

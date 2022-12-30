@@ -16,6 +16,7 @@ import { setUserInfo } from '../redux/userInfoSlice'
 import { Input } from '../Input/Input'
 import { useForm } from '../utils/useForm'
 import { Typography } from "@mui/material";
+import { setIsLoading } from '../redux/isLoadingSlice'
 
 
 
@@ -37,7 +38,11 @@ export const Containers = ({ handleAddContainer, handleDragItem, container, toke
     const userInfo = useSelector((state) => state.userInfo)
     const dispatch = useDispatch()
     const [disableDrag, setDisableDrag] = useState(true)
-    const { values, handleChange, resetForm, isValid, errors, setValues, setIsValid, setErrors } = useForm()
+    const { values, handleChange, resetForm, isValid, errors, setValues, setIsValid, setErrors } = useForm();
+
+    useEffect(() => {
+        localStorage.setItem('location', window.location.pathname)
+    }, [])
 
     useEffect(() => {
         if (boards && boardId) {
@@ -49,15 +54,33 @@ export const Containers = ({ handleAddContainer, handleDragItem, container, toke
         }
     }, [boards])
 
+    useEffect(() => {
+        window.addEventListener('click', handleCloseInput)
 
-
-
+        return () => {
+            window.removeEventListener('click', handleCloseInput)
+        }
+    }, [])
 
     useEffect(() => {
         if (!isDeletePopOpen && !isPopupWithFormOpen) {
             setConId()
         }
     }, [isDeletePopOpen, isPopupWithFormOpen])
+
+    useEffect(() => {
+        if (isPopupWithFormOpen) {
+            const title = containers.find((c) => c._id === conId).title
+            setValues({
+                title: title
+            })
+            setIsValid(true)
+            setErrors()
+        }
+
+
+    }, [isPopupWithFormOpen])
+
 
 
     const handleDragContainers = (dragIndex, hoverIndex) => { // think how not to dublitae app.js handler
@@ -83,8 +106,9 @@ export const Containers = ({ handleAddContainer, handleDragItem, container, toke
 
     }
 
-    const handleChangeConTitle = (e, values) => {
+    const handleChangeConTitle = (e, values, postSubmitCallBack) => {
         e.preventDefault();
+        dispatch(setIsLoading(true))
 
         const newCons = [...containers].map((c) => {
             if (c._id === conId) {
@@ -105,34 +129,17 @@ export const Containers = ({ handleAddContainer, handleDragItem, container, toke
             if (data) {
                 dispatch(setUserInfo(data[1]))
                 handleServerMessages('200')
-                setBoards(newBoards)
+                setBoards(newBoards);
+                postSubmitCallBack()
             }
         }).catch((e) => handleServerMessages(e.message))
+            .finally(() => dispatch(setIsLoading(false)))
 
 
 
     }
 
 
-    useEffect(() => {
-        window.addEventListener('click', handleCloseInput)
-
-        return () => {
-            window.removeEventListener('click', handleCloseInput)
-        }
-    }, [])
-
-    useEffect(() => {
-        if (isPopupWithFormOpen) {
-            const title = containers.find((c) => c._id === conId).title
-            setValues({
-                title: title
-            })
-            setIsValid(true)
-            setErrors()
-        }
-
-    }, [isPopupWithFormOpen])
 
     const handleCloseInput = () => {
         setIsInputOpen(false)

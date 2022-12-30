@@ -21,6 +21,8 @@ import { PopupWithMessage } from "../PopupWithMessage/PopupWithMessage.js";
 import { PopupWithQuestion } from "../PopupWithQuestion/PopupWithQuestion.js";
 import { useForm } from "../utils/useForm.js";
 import { PopupWithForm } from "../PopupWithForm/PopupWithForm.js";
+import { setIsLoading } from "../redux/isLoadingSlice.js";
+import { PreLoader } from "../PreLoader/PreLoader.js";
 
 
 export const Container = ({
@@ -59,6 +61,7 @@ export const Container = ({
     const dispatch = useDispatch()
     const [isFormOpen, setIsFormOpen] = useState(false)
     const { values, handleChange, resetForm, isValid, errors, setValues, setIsValid, setErrors } = useForm()
+    const isLoading = useSelector(state => state.isLoading)
 
     useEffect(() => {
         window.addEventListener('click', handleInputClose)
@@ -150,8 +153,8 @@ export const Container = ({
 
     }
 
-    const handleDeleteTask = (taskid) => {
-
+    const handleDeleteTask = (taskid, fakeArgument, postSubmitCallBack) => {
+        dispatch(setIsLoading(true))
         const newTasks = [...container.tasks].filter((t) => t._id !== taskid)
         const newContainers = [...containers].map((c) => {
             if (c._id === id) {
@@ -173,10 +176,13 @@ export const Container = ({
                 if (data) {
                     dispatch(setUserInfo(data[1]))
                     handleServerMessages('200')
-                    setBoards(newBoards)
+                    setBoards(newBoards);
+                    postSubmitCallBack()
 
                 }
             }).catch((e) => handleServerMessages(e.message))
+            .finally(() => dispatch(setIsLoading(false)))
+
 
 
 
@@ -190,6 +196,7 @@ export const Container = ({
     }
 
     const handleAddTask = (title) => {
+
 
         Api.handleAddNewTasK(token, id, title).then((task) => {
             if (task) {
@@ -225,9 +232,9 @@ export const Container = ({
 
     }
 
-    const handleUpdateTask = (e, values) => {
+    const handleUpdateTask = (e, values, postCallBack) => {
         e.preventDefault()
-
+        dispatch(setIsLoading(true))
         const newTasks = [...container.tasks].map((t) => {
             if (taskId === t._id) {
                 return { ...t, title: values.title, description: values.description ? values.description : "" }
@@ -253,14 +260,16 @@ export const Container = ({
             if (data) {
                 dispatch(setUserInfo(data[1]))
                 handleServerMessages('200')
-                setBoards(newBoards)
+                setBoards(newBoards);
+                postCallBack();
             }
         }).catch((e) => handleServerMessages(e.message))
+            .finally(() => dispatch(setIsLoading(false)))
 
 
     }
 
-
+    console.log(isLoading);
     return (
         <div className="container p-2" style={{ border: `2px solid ${color}`, boxShadow: `10px 10px 10px ${conShadow} ` }}>
             <PopupWithQuestion dialogTitle='Are you sure you want to delete this task?' idToDelete={taskId} onAgree={handleDeleteTask} isPopupOpen={isPopupOpen} setIsPopupOpen={setIsPopupOpen} />

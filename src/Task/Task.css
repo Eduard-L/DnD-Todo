@@ -15,6 +15,10 @@
   height: 50px;
   border-radius: 10px;
   cursor: pointer;
+  transition: transform 0.5s;
+}
+.task:hover {
+  transform: scale(1.1);
 }
 .task-icons-con {
   display: flex;
@@ -26,12 +30,15 @@
 .task_type_add {
   opacity: 0.5;
   cursor: pointer;
-  transition: opacity 0.3s ease-in-out;
   justify-content: center;
   align-items: center;
+  transition: transform 0.5s;
 }
 .task_type_add:hover {
   opacity: 1;
+}
+.task_type_add:hover .add-btn {
+  transform: scale(1.1);
 }
 .add-task-btn {
   transform: scale(1);

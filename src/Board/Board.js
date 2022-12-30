@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import "./Board.css"
 import { useNavigate } from "react-router-dom";
 
-export const Board = ({ setDisableDrag, title, id, setBoardId, setIsDeletePopOpen, setIsPopupWithFormOpen }) => {
+export const Board = ({ setDisableDrag, title, id, setBoardId, setIsDeletePopOpen, setIsPopupWithFormOpen, img }) => {
     const visibilityMode = useSelector((state) => state.mode)
     const color = (visibilityMode === DARK) ? darkColor : lightColor;
     const boxShadowColor = (visibilityMode === DARK) ? darkContainerColor : lightColor;
@@ -16,7 +16,7 @@ export const Board = ({ setDisableDrag, title, id, setBoardId, setIsDeletePopOpe
         <Card onClick={() => navigate(`/boards/${id}/containers`)} className="board p-2" style={{ border: `2px solid ${color}  `, boxShadow: `8px 8px 8px ${boxShadowColor}` }}>
 
 
-            <CardContent className="p-0 flex flex-col h-full ">
+            <CardContent className="p-0 flex flex-col h-full " style={{ padding: 0 }}>
                 <div className="flex flex-row w-full justify-between items-center">
                     <div className="flex flex-row items-center">
                         <IconButton
@@ -51,7 +51,7 @@ export const Board = ({ setDisableDrag, title, id, setBoardId, setIsDeletePopOpe
                     style={{ height: '90%' }}
                     className="object-cover rounded"
                     component="img"
-                    image="https://images.unsplash.com/photo-1662581871625-7dbd3ac1ca18?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1886&q=80"
+                    image={img}
                     alt="board img"
                 />
             </CardContent>

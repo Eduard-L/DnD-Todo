@@ -57,6 +57,7 @@ class myApi {
     }
 
     async getUserInfo(token) {
+
         const response = await fetch(`${this.url}/user`, {
             headers: {
                 Accept: 'application/json',
@@ -223,7 +224,7 @@ class myApi {
         return this._checkResponse(response)
     }
 
-    async handleUpdateBoard(token, id, title, containers) {
+    async handleUpdateBoard(token, id, title, containers, img) {
         const response = await fetch(`${this.url}/boards/${id}`, {
             method: "PATCH",
             headers: {
@@ -233,7 +234,8 @@ class myApi {
             },
             body: JSON.stringify({
                 title: title,
-                containers: containers
+                containers: containers,
+                img: img
             })
         })
 
